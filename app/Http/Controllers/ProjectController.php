@@ -63,6 +63,7 @@ class ProjectController extends Controller
     {
         $data = [
             'project' => Project::findOrFail($id),
+            'projectDataCount' => Project::findOrFail($id)->data()->count(),
         ];
         return view('project.show', $data);
     }

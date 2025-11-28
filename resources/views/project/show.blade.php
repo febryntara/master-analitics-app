@@ -105,4 +105,73 @@
             </div>
         </div>
     </div>
+    <div class="pt-1 pb-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <section>
+                        <header>
+                            <h2 class="text-lg font-medium text-gray-900">
+                                Data Count: {{ $projectDataCount }}
+                            </h2>
+
+                            <p class="mt-1 text-sm text-gray-600">
+                                {{ __('total data for project ' . $project->name) }} <br>
+                                {{ __('(minimum 100 data required to analyze)') }}
+                            </p>
+                        </header>
+
+                        <form method="post" action="{{ route('projects.store') }}" class="mt-6 space-y-6">
+                            @csrf
+                            @method('post')
+
+                            @if ($projectDataCount >= 100)
+                                <div class="flex items-center gap-4">
+                                    <x-primary-button>Analyze</x-primary-button>
+                                </div>
+                            @endif
+                        </form>
+
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-1 pb-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <section>
+                        <header>
+                            <h2 class="text-lg font-medium text-gray-900">
+                                {{ __('Raw File Input') }}
+                            </h2>
+
+                            <p class="mt-1 text-sm text-gray-600">
+                                {{ __('input project data for ' . $project->name) }}
+                            </p>
+                        </header>
+
+                        <form method="post" action="{{ route('projects.upload-json', ['project' => $project]) }}"
+                            class="mt-6 space-y-6" enctype="multipart/form-data">
+                            @csrf
+                            @method('post')
+
+                            <div class="w-[50%]">
+                                <x-input-label for="data_json_input" :value="__('Data JSON input')" />
+                                <x-text-input id="data_json_input" name="data_json_input" type="file"
+                                    class="mt-1 block w-full" autofocus autocomplete="data_json_input" />
+                                <x-input-error class="mt-2" :messages="$errors->get('data_json_input')" />
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <x-primary-button>{{ __('Upload') }}</x-primary-button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>
