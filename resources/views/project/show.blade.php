@@ -1,0 +1,108 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex gap-2 items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Detail Project') }} |
+            </h2>
+
+            <x-nav-link :href="route('projects.index')">
+                {{ __('Back') }}
+            </x-nav-link>
+
+            <x-nav-link :href="route('projects.edit', ['project' => $project])">
+                {{ __('Edit') }}
+            </x-nav-link>
+
+            <x-danger-button x-data=""
+                x-on:click.prevent="$dispatch('open-modal', 'confirm-project-deletion')">{{ __('Delete Project') }}</x-danger-button>
+
+            <x-modal name="confirm-project-deletion" :show="$errors->projectDeletion->isNotEmpty()" focusable>
+                <form method="post" action="{{ route('projects.destroy', ['project' => $project]) }}" class="p-6">
+                    @csrf
+                    @method('delete')
+
+                    <h2 class="text-lg font-medium text-gray-900">
+                        {{ __('Are you sure you want to delete your project?') }}
+                    </h2>
+
+                    <p class="mt-1 text-sm text-gray-600">
+                        {{ __('Once your project is deleted, all of its resources and data will be permanently deleted.') }}
+                    </p>
+
+                    <div class="mt-6 flex justify-end">
+                        <x-secondary-button x-on:click="$dispatch('close')">
+                            {{ __('Cancel') }}
+                        </x-secondary-button>
+
+                        <x-danger-button class="ms-3">
+                            {{ __('Delete Project') }}
+                        </x-danger-button>
+                    </div>
+                </form>
+            </x-modal>
+        </div>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <section>
+                        <header>
+                            <h2 class="text-lg font-medium text-gray-900">
+                                {{ __('Project Information') }}
+                            </h2>
+
+                            <p class="mt-1 text-sm text-gray-600">
+                                {{ __('Detail project data for ' . $project->name) }}
+                            </p>
+                        </header>
+
+                        <form method="post" action="{{ route('projects.store') }}" class="mt-6 space-y-6">
+                            @csrf
+                            @method('post')
+
+                            <div>
+                                <x-input-label for="name" :value="__('Name')" />
+                                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
+                                    :value="old('name', $project->name)" disabled autofocus autocomplete="name" />
+                                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="description" :value="__('Description')" />
+                                <x-text-input id="description" name="description" type="text"
+                                    class="mt-1 block w-full" :value="$project->description ?? 'none'" disabled autofocus
+                                    autocomplete="description" />
+                                <x-input-error class="mt-2" :messages="$errors->get('description')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="raw_text_label" :value="__('Raw Text Label')" />
+                                <x-text-input id="raw_text_label" name="raw_text_label" type="text"
+                                    class="mt-1 block w-full" :value="old('raw_text_label', $project->raw_text_label)" disabled autofocus
+                                    autocomplete="raw_text_label" />
+                                <x-input-error class="mt-2" :messages="$errors->get('raw_text_label')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="raw_id_label" :value="__('Raw Id Label')" />
+                                <x-text-input id="raw_id_label" name="raw_id_label" type="text"
+                                    class="mt-1 block w-full" :value="old('raw_id_label', $project->raw_id_label)" disabled autofocus
+                                    autocomplete="raw_id_label" />
+                                <x-input-error class="mt-2" :messages="$errors->get('raw_id_label')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="status" :value="__('Status')" />
+                                <x-text-input id="status" name="status" type="text" class="mt-1 block w-full"
+                                    :value="old('status', $project->status)" disabled autofocus autocomplete="status" />
+                                <x-input-error class="mt-2" :messages="$errors->get('status')" />
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
