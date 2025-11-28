@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('app_api_logs', function (Blueprint $table) {
             $table->id();
-            $table->varchar('endpoint');
-            $table->varchar('method');
+            $table->string('endpoint');
+            $table->string('method');
             $table->json('request_payload');
             $table->json('response_payload');
             $table->integer('status_code');

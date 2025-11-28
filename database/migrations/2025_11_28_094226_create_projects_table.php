@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->integer('user_id');
-            $table->varchar('raw_text_label');
-            $table->varchar('raw_id_label');
+            $table->string('raw_text_label');
+            $table->string('raw_id_label');
             $table->enum('status', ['pending', 'processing', 'finished'])->default('pending');
             $table->timestamps();
         });

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('sentiment', ['positive', 'negative', 'neutral'])->default('neutral');
             $table->float('confidence_score')->default(0);
             $table->integer('preprocessing_time_ms')->default(0);
-            $table->varchar('model_version')->nullable();
+            $table->string('model_version')->nullable();
             $table->timestamps();
         });
     }

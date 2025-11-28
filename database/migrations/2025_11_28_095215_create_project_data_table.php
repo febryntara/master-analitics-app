@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('app_project_data', function (Blueprint $table) {
             $table->id();
             $table->integer('project_id');
-            $table->varchar('raw_id');
+            $table->string('raw_id');
             $table->text('raw_text');
             $table->enum('status', ['pending', 'processing', 'done', 'error'])->default('pending');
             $table->text('error_message')->nullable();
