@@ -25,6 +25,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::resource('projects', ProjectController::class);
 
+    Route::post('projects/{project}/finish-analyzing', [ProjectController::class, 'finishAnalyzing'])->name('projects.finishAnalyzing');
+    Route::post('projects/{project}/delete-raw', [ProjectController::class, 'deleteRawData'])->name('projects.deleteRawData');
+
     Route::post('projects/{project}/upload-json', [ProjectDataController::class, 'uploadBatch'])->name('projects.upload-json');
     Route::post('projects/{project}/start-processing', [ProjectDataController::class, 'startBatchProcessing'])->name('projects.startProcessing');
     Route::get('projects/{project}/analytics', [AnalyticsController::class, 'show'])->name('projects.analytics');

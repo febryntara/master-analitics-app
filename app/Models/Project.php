@@ -32,4 +32,16 @@ class Project extends Model
     {
         return $this->hasMany(TaskLog::class, 'project_id');
     }
+
+    // boot method to set default values
+    protected static function booted()
+    {
+        // deleteing event to cascade delete related project data
+        static::deleting(function ($project) {
+            $project->data()->each(function ($projectData) {
+                $projectData->delete();
+            });
+            $project->taskLogs()->delete();
+        });
+    }
 }

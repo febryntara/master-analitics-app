@@ -27,4 +27,12 @@ class ProjectData extends Model
     {
         return $this->hasOne(ProcessedData::class, 'project_data_id');
     }
+
+    protected static function booted()
+    {
+        // delete event to cascade delete related processed data
+        static::deleting(function ($projectData) {
+            $projectData->processed()->get()->each->delete();
+        });
+    }
 }

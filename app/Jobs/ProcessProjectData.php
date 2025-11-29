@@ -85,6 +85,7 @@ class ProcessProjectData implements ShouldQueue
                     'error_message' => 'Flask API error: ' . $response->body(),
                 ]);
                 $col = 'failed_rows';
+                \Log::debug('JOB-ERROR', ['pd_id' => $this->projectData->id, 'tl_id' => $this->taskLogId]);
             }
         } catch (\Exception $e) {
             $this->projectData->update([
@@ -92,6 +93,7 @@ class ProcessProjectData implements ShouldQueue
                 'error_message' => $e->getMessage(),
             ]);
             $col = 'failed_rows';
+            \Log::debug('JOB-FAILED', ['pd_id' => $this->projectData->id, 'tl_id' => $this->taskLogId]);
         }
 
         /* ========== SEMOR & EVENT LAST JOB ========== */

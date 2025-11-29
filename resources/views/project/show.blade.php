@@ -41,9 +41,11 @@
                 </form>
             </x-modal>
 
-            <x-nav-link :href="route('projects.analytics', ['project' => $project])">
-                {{ __('Report') }}
-            </x-nav-link>
+            @if ($project->status == 'finished')
+                <x-nav-link :href="route('projects.analytics', ['project' => $project])">
+                    {{ __('Report') }}
+                </x-nav-link>
+            @endif
         </div>
     </x-slot>
 
@@ -105,23 +107,15 @@
 
                     {{-- Jika taskLog ada, tampilkan progress bar --}}
 
-                    @if ($taskLog)
+                    @if ($taskLog ?? false)
                         <div class="mt-2 progress">
                             <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%</div>
                         </div>
-                        <p id="progressText">0 / {{ $taskLog->total_rows }}</p>
+                        <div class="flex gap-2">
+                            <p id="progressText">0 / {{ $taskLog->total_rows }}</p>
+                            <p>data proceed</p>
+                        </div>
                     @endif
-
-                    {{-- Tombol Analyze --}}
-                    <form method="post" action="{{ route('projects.startProcessing', ['project' => $project]) }}"
-                        class="mt-6 space-y-6">
-                        @csrf
-                        @method('post')
-
-                        @if ($projectDataCount >= 100)
-                            <x-primary-button>Analyze</x-primary-button>
-                        @endif
-                    </form>
                 </div>
             </div>
         </div>
@@ -135,22 +129,74 @@
                     <h2 class="text-lg font-medium text-gray-900">{{ __('Raw File Input') }}</h2>
                     <p class="mt-1 text-sm text-gray-600">{{ __('input project data for ' . $project->name) }}</p>
 
-                    <form method="post" action="{{ route('projects.upload-json', ['project' => $project]) }}"
-                        class="mt-6 space-y-6" enctype="multipart/form-data">
-                        @csrf
-                        @method('post')
 
-                        <div class="w-[50%]">
-                            <x-input-label for="data_json_input" :value="__('Data JSON input')" />
-                            <x-text-input id="data_json_input" name="data_json_input" type="file"
-                                class="block w-full mt-1" />
-                            <x-input-error class="mt-2" :messages="$errors->get('data_json_input')" />
-                        </div>
+                    @if ($project->status != 'finished' && $canInputFile)
+                        <form id="data_json_form" method="post"
+                            action="{{ route('projects.upload-json', ['project' => $project]) }}"
+                            class="mt-6 space-y-6" enctype="multipart/form-data">
+                            @csrf
+                            @method('post')
 
-                        <div class="flex items-center gap-4">
-                            <x-primary-button>{{ __('Upload') }}</x-primary-button>
-                        </div>
-                    </form>
+                            <div class="w-[50%]">
+                                <x-input-label for="data_json_input" :value="__('Data JSON input')" />
+                                <x-text-input id="data_json_input" name="data_json_input" type="file"
+                                    class="block w-full mt-1" />
+                                <x-input-error class="mt-2" :messages="$errors->get('data_json_input')" />
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <x-primary-button>{{ __('Upload') }}</x-primary-button>
+                            </div>
+                        </form>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Raw JSON Input --}}
+    <div class="pt-1 pb-12">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <h2 class="text-lg font-medium text-gray-900">Project Action</h2>
+                    <p class="mt-1 text-sm text-gray-600">Several action that you can do in your project</p>
+
+                    <div class="flex items-center gap-2 mt-6">
+                        @if ($project->status != 'finished')
+                            {{-- Tombol Analyze --}}
+                            <form method="post"
+                                action="{{ route('projects.startProcessing', ['project' => $project]) }}"
+                                class="p-0 m-0">
+                                @csrf
+                                @method('post')
+
+                                @if ($canAnalyze)
+                                    <x-primary-button>Analyze</x-primary-button>
+                                @endif
+                            </form>
+
+                            @if ($project->status == 'processing')
+                                <form class="p-0 m-0" method="post"
+                                    action="{{ route('projects.finishAnalyzing', ['project' => $project]) }}">
+                                    @csrf
+                                    @method('post')
+                                    <x-primary-button>Finish Analyzing</x-primary-button>
+                                </form>
+                            @endif
+
+                            @if ($projectDataCount > 1)
+                                <form class="p-0 m-0" method="post"
+                                    action="{{ route('projects.deleteRawData', ['project' => $project]) }}">
+                                    @csrf
+                                    @method('post')
+                                    <x-primary-button>Delete Data Raw</x-primary-button>
+                                </form>
+                            @endif
+                        @endif
+
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -172,7 +218,15 @@
             document.getElementById('progressText').textContent =
                 `${d.processed + d.failed} / ${d.total}`;
 
-            if (d.status === 'completed' || d.status === 'failed') src.close();
+            const dataJsonForm = document.getElementById('data_json_form');
+            if (dataJsonForm) {
+                dataJsonForm.remove();
+            }
+
+            if (d.status === 'completed' || d.status === 'failed') {
+                src.close();
+                location.reload();
+            };
         };
         src.onerror = () => src.close();
         /* ]]> */

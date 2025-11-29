@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\TaskLog;
+use Illuminate\Console\View\Components\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -62,10 +63,26 @@ class ProjectController extends Controller
 
     public function show($id)
     {
+        $project = Project::findOrFail($id);
+        $projectDataCount = $project->data()->count();
+        $taskLogActive = TaskLog::where('project_id', $project->id)
+            ->where('status', 'running')
+            ->latest()
+            ->first();
+        $total_task_rows = TaskLog::where('project_id', $project->id)
+            ->sum('total_rows');
+        $canInputFile = TaskLog::where('project_id', $project->id)
+            ->where('status', 'running')->orWhere('status', 'pending')
+            ->doesntExist();
+
+        $canAnalyze = is_null($taskLogActive) && $project->status != 'finished' && $projectDataCount > $total_task_rows && $projectDataCount > 0;
+
         $data = [
             'project' => Project::findOrFail($id),
-            'projectDataCount' => Project::findOrFail($id)->data()->count(),
-            'taskLog' => TaskLog::where('project_id', $id)->latest()->first(),
+            'projectDataCount' => $projectDataCount,
+            'taskLog' => $taskLogActive,
+            'canAnalyze' => $canAnalyze,
+            'canInputFile' => $canInputFile,
         ];
 
         return view('project.show', $data);
@@ -126,5 +143,32 @@ class ProjectController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to delete project. Please try again.');
         }
+    }
+
+    public function finishAnalyzing($id)
+    {
+        $project = Project::findOrFail($id);
+        $project->status = 'finished';
+        $is_updated = $project->save();
+
+        if ($is_updated) {
+            return redirect()->route('projects.show', ['project' => $project])
+                ->with('success', 'Project analysis marked as finished.');
+        } else {
+            return redirect()->back()
+                ->with('error', 'Failed to mark project as finished. Please try again.');
+        }
+    }
+
+    public function deleteRawData($id)
+    {
+        $project = Project::findOrFail($id);
+        $deletedCount = $project->data()->get()->each->delete();
+        $project->taskLogs()->delete();
+        $project->status = 'pending';
+        $project->save();
+
+        return redirect()->route('projects.show', ['project' => $project])
+            ->with('success', "$deletedCount raw data entries deleted successfully.");
     }
 }
