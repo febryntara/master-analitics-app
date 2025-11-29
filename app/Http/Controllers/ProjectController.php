@@ -171,4 +171,10 @@ class ProjectController extends Controller
         return redirect()->route('projects.show', ['project' => $project])
             ->with('success', "$deletedCount raw data entries deleted successfully.");
     }
+
+    public function setSession($projectId)
+    {
+        session()->flash('success', 'Project processing completed!');
+        return response()->json(['status' => 'ok']);
+    }
 }

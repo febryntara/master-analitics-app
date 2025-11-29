@@ -225,7 +225,16 @@
 
             if (d.status === 'completed' || d.status === 'failed') {
                 src.close();
-                location.reload();
+                // Kirim request ke server untuk set session
+                fetch(`/dashboard/projects/${projectId}/set-session`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                }).then(() => {
+                    location.reload();
+                });
             };
         };
         src.onerror = () => src.close();

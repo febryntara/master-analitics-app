@@ -33,6 +33,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::get('projects/{project}/analytics', [AnalyticsController::class, 'show'])->name('projects.analytics');
 });
 
+Route::post('/dashboard/projects/{project}/set-session', [ProjectController::class, 'setSession'])->name('projects.setSession');
 Route::get('/dashboard/projects/{taskLog}/progress', [TaskLogController::class, 'progress'])->withoutMiddleware([VerifyCsrfToken::class]);
 Route::get('/dashboard/projects/{project}/progress-sse', [TaskLogController::class, 'progressSse'])->name('projects.progress-sse');
 
