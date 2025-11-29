@@ -163,7 +163,8 @@ class ProjectController extends Controller
     public function deleteRawData($id)
     {
         $project = Project::findOrFail($id);
-        $deletedCount = $project->data()->get()->each->delete();
+        $deletedCount = $project->data()->count();
+        $project->data()->get()->each->delete();
         $project->taskLogs()->delete();
         $project->status = 'pending';
         $project->save();
