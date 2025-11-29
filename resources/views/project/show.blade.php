@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex gap-2 items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div class="flex items-center gap-2">
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Detail Project') }} |
             </h2>
 
@@ -29,7 +29,7 @@
                         {{ __('Once your project is deleted, all of its resources and data will be permanently deleted.') }}
                     </p>
 
-                    <div class="mt-6 flex justify-end">
+                    <div class="flex justify-end mt-6">
                         <x-secondary-button x-on:click="$dispatch('close')">
                             {{ __('Cancel') }}
                         </x-secondary-button>
@@ -40,13 +40,17 @@
                     </div>
                 </form>
             </x-modal>
+
+            <x-nav-link :href="route('projects.analytics', ['project' => $project])">
+                {{ __('Report') }}
+            </x-nav-link>
         </div>
     </x-slot>
 
     {{-- Project Info --}}
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="text-lg font-medium text-gray-900">{{ __('Project Information') }}</h2>
                     <p class="mt-1 text-sm text-gray-600">{{ __('Detail project data for ' . $project->name) }}</p>
@@ -55,31 +59,31 @@
                         @csrf
                         <div>
                             <x-input-label for="name" :value="__('Name')" />
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
+                            <x-text-input id="name" name="name" type="text" class="block w-full mt-1"
                                 :value="old('name', $project->name)" disabled />
                         </div>
 
                         <div>
                             <x-input-label for="description" :value="__('Description')" />
-                            <x-text-input id="description" name="description" type="text" class="mt-1 block w-full"
+                            <x-text-input id="description" name="description" type="text" class="block w-full mt-1"
                                 :value="$project->description ?? 'none'" disabled />
                         </div>
 
                         <div>
                             <x-input-label for="raw_text_label" :value="__('Raw Text Label')" />
                             <x-text-input id="raw_text_label" name="raw_text_label" type="text"
-                                class="mt-1 block w-full" :value="$project->raw_text_label" disabled />
+                                class="block w-full mt-1" :value="$project->raw_text_label" disabled />
                         </div>
 
                         <div>
                             <x-input-label for="raw_id_label" :value="__('Raw Id Label')" />
-                            <x-text-input id="raw_id_label" name="raw_id_label" type="text" class="mt-1 block w-full"
+                            <x-text-input id="raw_id_label" name="raw_id_label" type="text" class="block w-full mt-1"
                                 :value="$project->raw_id_label" disabled />
                         </div>
 
                         <div>
                             <x-input-label for="status" :value="__('Status')" />
-                            <x-text-input id="status" name="status" type="text" class="mt-1 block w-full"
+                            <x-text-input id="status" name="status" type="text" class="block w-full mt-1"
                                 :value="$project->status" disabled />
                         </div>
                     </form>
@@ -90,8 +94,8 @@
 
     {{-- Batch Analysis --}}
     <div class="pt-1 pb-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="text-lg font-medium text-gray-900">Data Count: {{ $projectDataCount }}</h2>
                     <p class="mt-1 text-sm text-gray-600">
@@ -102,7 +106,7 @@
                     {{-- Jika taskLog ada, tampilkan progress bar --}}
 
                     @if ($taskLog)
-                        <div class="progress mt-2">
+                        <div class="mt-2 progress">
                             <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%</div>
                         </div>
                         <p id="progressText">0 / {{ $taskLog->total_rows }}</p>
@@ -125,8 +129,8 @@
 
     {{-- Raw JSON Input --}}
     <div class="pt-1 pb-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="text-lg font-medium text-gray-900">{{ __('Raw File Input') }}</h2>
                     <p class="mt-1 text-sm text-gray-600">{{ __('input project data for ' . $project->name) }}</p>
@@ -139,7 +143,7 @@
                         <div class="w-[50%]">
                             <x-input-label for="data_json_input" :value="__('Data JSON input')" />
                             <x-text-input id="data_json_input" name="data_json_input" type="file"
-                                class="mt-1 block w-full" />
+                                class="block w-full mt-1" />
                             <x-input-error class="mt-2" :messages="$errors->get('data_json_input')" />
                         </div>
 

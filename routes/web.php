@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectDataController;
@@ -25,8 +26,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::resource('projects', ProjectController::class);
 
     Route::post('projects/{project}/upload-json', [ProjectDataController::class, 'uploadBatch'])->name('projects.upload-json');
-    Route::post('projects/{project}/start-processing', [ProjectDataController::class, 'startBatchProcessing'])
-        ->name('projects.startProcessing');
+    Route::post('projects/{project}/start-processing', [ProjectDataController::class, 'startBatchProcessing'])->name('projects.startProcessing');
+    Route::get('projects/{project}/analytics', [AnalyticsController::class, 'show'])->name('projects.analytics');
 });
 
 Route::get('/dashboard/projects/{taskLog}/progress', [TaskLogController::class, 'progress'])->withoutMiddleware([VerifyCsrfToken::class]);
