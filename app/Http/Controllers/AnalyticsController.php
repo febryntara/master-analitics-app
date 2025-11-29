@@ -42,7 +42,7 @@ class AnalyticsController extends Controller
             ->filter()
             ->countBy()
             ->sortDesc()
-            ->take(50);
+            ->take(30)->chunk(10);
 
         // WORDCLOUD - ambil dari Flask
         $wordcloudUrl = null;
@@ -59,7 +59,7 @@ class AnalyticsController extends Controller
         // API PERFORMANCE
         $apiLogs = ApiLog::where('endpoint', '/preprocess')
             ->orderBy('created_at')
-            ->get();
+            ->paginate(50);
 
         $avgApiTime = $apiLogs->avg('duration_ms');
         $errorLogs = $apiLogs->where('status_code', '!=', 200)->count();
