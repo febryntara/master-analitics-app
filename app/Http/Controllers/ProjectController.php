@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\TaskLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -64,7 +65,9 @@ class ProjectController extends Controller
         $data = [
             'project' => Project::findOrFail($id),
             'projectDataCount' => Project::findOrFail($id)->data()->count(),
+            'taskLog' => TaskLog::where('project_id', $id)->latest()->first(),
         ];
+
         return view('project.show', $data);
     }
 

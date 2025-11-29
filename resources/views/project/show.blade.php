@@ -43,135 +43,134 @@
         </div>
     </x-slot>
 
+    {{-- Project Info --}}
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <section>
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900">
-                                {{ __('Project Information') }}
-                            </h2>
+                    <h2 class="text-lg font-medium text-gray-900">{{ __('Project Information') }}</h2>
+                    <p class="mt-1 text-sm text-gray-600">{{ __('Detail project data for ' . $project->name) }}</p>
 
-                            <p class="mt-1 text-sm text-gray-600">
-                                {{ __('Detail project data for ' . $project->name) }}
-                            </p>
-                        </header>
+                    <form class="mt-6 space-y-6">
+                        @csrf
+                        <div>
+                            <x-input-label for="name" :value="__('Name')" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
+                                :value="old('name', $project->name)" disabled />
+                        </div>
 
-                        <form method="post" action="{{ route('projects.store') }}" class="mt-6 space-y-6">
-                            @csrf
-                            @method('post')
+                        <div>
+                            <x-input-label for="description" :value="__('Description')" />
+                            <x-text-input id="description" name="description" type="text" class="mt-1 block w-full"
+                                :value="$project->description ?? 'none'" disabled />
+                        </div>
 
-                            <div>
-                                <x-input-label for="name" :value="__('Name')" />
-                                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
-                                    :value="old('name', $project->name)" disabled autofocus autocomplete="name" />
-                                <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                            </div>
+                        <div>
+                            <x-input-label for="raw_text_label" :value="__('Raw Text Label')" />
+                            <x-text-input id="raw_text_label" name="raw_text_label" type="text"
+                                class="mt-1 block w-full" :value="$project->raw_text_label" disabled />
+                        </div>
 
-                            <div>
-                                <x-input-label for="description" :value="__('Description')" />
-                                <x-text-input id="description" name="description" type="text"
-                                    class="mt-1 block w-full" :value="$project->description ?? 'none'" disabled autofocus
-                                    autocomplete="description" />
-                                <x-input-error class="mt-2" :messages="$errors->get('description')" />
-                            </div>
+                        <div>
+                            <x-input-label for="raw_id_label" :value="__('Raw Id Label')" />
+                            <x-text-input id="raw_id_label" name="raw_id_label" type="text" class="mt-1 block w-full"
+                                :value="$project->raw_id_label" disabled />
+                        </div>
 
-                            <div>
-                                <x-input-label for="raw_text_label" :value="__('Raw Text Label')" />
-                                <x-text-input id="raw_text_label" name="raw_text_label" type="text"
-                                    class="mt-1 block w-full" :value="old('raw_text_label', $project->raw_text_label)" disabled autofocus
-                                    autocomplete="raw_text_label" />
-                                <x-input-error class="mt-2" :messages="$errors->get('raw_text_label')" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="raw_id_label" :value="__('Raw Id Label')" />
-                                <x-text-input id="raw_id_label" name="raw_id_label" type="text"
-                                    class="mt-1 block w-full" :value="old('raw_id_label', $project->raw_id_label)" disabled autofocus
-                                    autocomplete="raw_id_label" />
-                                <x-input-error class="mt-2" :messages="$errors->get('raw_id_label')" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="status" :value="__('Status')" />
-                                <x-text-input id="status" name="status" type="text" class="mt-1 block w-full"
-                                    :value="old('status', $project->status)" disabled autofocus autocomplete="status" />
-                                <x-input-error class="mt-2" :messages="$errors->get('status')" />
-                            </div>
-                        </form>
-                    </section>
+                        <div>
+                            <x-input-label for="status" :value="__('Status')" />
+                            <x-text-input id="status" name="status" type="text" class="mt-1 block w-full"
+                                :value="$project->status" disabled />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- Batch Analysis --}}
     <div class="pt-1 pb-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <section>
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900">
-                                Data Count: {{ $projectDataCount }}
-                            </h2>
+                    <h2 class="text-lg font-medium text-gray-900">Data Count: {{ $projectDataCount }}</h2>
+                    <p class="mt-1 text-sm text-gray-600">
+                        {{ __('total data for project ' . $project->name) }} <br>
+                        {{ __('(minimum 100 data required to analyze)') }}
+                    </p>
 
-                            <p class="mt-1 text-sm text-gray-600">
-                                {{ __('total data for project ' . $project->name) }} <br>
-                                {{ __('(minimum 100 data required to analyze)') }}
-                            </p>
-                        </header>
+                    {{-- Jika taskLog ada, tampilkan progress bar --}}
 
-                        <form method="post" action="{{ route('projects.store') }}" class="mt-6 space-y-6">
-                            @csrf
-                            @method('post')
+                    @if ($taskLog)
+                        <div class="progress mt-2">
+                            <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%</div>
+                        </div>
+                        <p id="progressText">0 / {{ $taskLog->total_rows }}</p>
+                    @endif
 
-                            @if ($projectDataCount >= 100)
-                                <div class="flex items-center gap-4">
-                                    <x-primary-button>Analyze</x-primary-button>
-                                </div>
-                            @endif
-                        </form>
+                    {{-- Tombol Analyze --}}
+                    <form method="post" action="{{ route('projects.startProcessing', ['project' => $project]) }}"
+                        class="mt-6 space-y-6">
+                        @csrf
+                        @method('post')
 
-                    </section>
+                        @if ($projectDataCount >= 100)
+                            <x-primary-button>Analyze</x-primary-button>
+                        @endif
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Raw JSON Input --}}
     <div class="pt-1 pb-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <section>
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900">
-                                {{ __('Raw File Input') }}
-                            </h2>
+                    <h2 class="text-lg font-medium text-gray-900">{{ __('Raw File Input') }}</h2>
+                    <p class="mt-1 text-sm text-gray-600">{{ __('input project data for ' . $project->name) }}</p>
 
-                            <p class="mt-1 text-sm text-gray-600">
-                                {{ __('input project data for ' . $project->name) }}
-                            </p>
-                        </header>
+                    <form method="post" action="{{ route('projects.upload-json', ['project' => $project]) }}"
+                        class="mt-6 space-y-6" enctype="multipart/form-data">
+                        @csrf
+                        @method('post')
 
-                        <form method="post" action="{{ route('projects.upload-json', ['project' => $project]) }}"
-                            class="mt-6 space-y-6" enctype="multipart/form-data">
-                            @csrf
-                            @method('post')
+                        <div class="w-[50%]">
+                            <x-input-label for="data_json_input" :value="__('Data JSON input')" />
+                            <x-text-input id="data_json_input" name="data_json_input" type="file"
+                                class="mt-1 block w-full" />
+                            <x-input-error class="mt-2" :messages="$errors->get('data_json_input')" />
+                        </div>
 
-                            <div class="w-[50%]">
-                                <x-input-label for="data_json_input" :value="__('Data JSON input')" />
-                                <x-text-input id="data_json_input" name="data_json_input" type="file"
-                                    class="mt-1 block w-full" autofocus autocomplete="data_json_input" />
-                                <x-input-error class="mt-2" :messages="$errors->get('data_json_input')" />
-                            </div>
-
-                            <div class="flex items-center gap-4">
-                                <x-primary-button>{{ __('Upload') }}</x-primary-button>
-                            </div>
-                        </form>
-                    </section>
+                        <div class="flex items-center gap-4">
+                            <x-primary-button>{{ __('Upload') }}</x-primary-button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- JS untuk progress realtime --}}
+    <script>
+        /* <![CDATA[ */
+        const projectId = {{ $project->id }};
+        let last = 0;
+
+        const src = new EventSource(`/dashboard/projects/${projectId}/progress-sse`);
+        src.onmessage = e => {
+            const d = JSON.parse(e.data);
+            const percent = Math.round((d.processed + d.failed) / d.total * 100);
+
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressBar').textContent = percent + '%';
+            document.getElementById('progressText').textContent =
+                `${d.processed + d.failed} / ${d.total}`;
+
+            if (d.status === 'completed' || d.status === 'failed') src.close();
+        };
+        src.onerror = () => src.close();
+        /* ]]> */
+    </script>
 </x-app-layout>

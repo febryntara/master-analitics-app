@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectDataController;
+use App\Http\Controllers\TaskLogController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +25,11 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::resource('projects', ProjectController::class);
 
     Route::post('projects/{project}/upload-json', [ProjectDataController::class, 'uploadBatch'])->name('projects.upload-json');
+    Route::post('projects/{project}/start-processing', [ProjectDataController::class, 'startBatchProcessing'])
+        ->name('projects.startProcessing');
 });
+
+Route::get('/dashboard/projects/{taskLog}/progress', [TaskLogController::class, 'progress'])->withoutMiddleware([VerifyCsrfToken::class]);
+Route::get('/dashboard/projects/{project}/progress-sse', [TaskLogController::class, 'progressSse'])->name('projects.progress-sse');
 
 require __DIR__ . '/auth.php';

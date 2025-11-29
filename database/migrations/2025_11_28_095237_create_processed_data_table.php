@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('project_data_id');
             $table->text('cleaned_text');
-            $table->enum('sentiment', ['positive', 'negative', 'neutral'])->default('neutral');
+            $table->string('sentiment')->nullable();
             $table->float('confidence_score')->default(0);
             $table->integer('preprocessing_time_ms')->default(0);
             $table->string('model_version')->nullable();
