@@ -58,6 +58,7 @@ class AnalyticsController extends Controller
 
         // API PERFORMANCE
         $apiLogs = ApiLog::where('endpoint', '/preprocess')
+            ->where('project_id', $project->id)
             ->orderBy('created_at')
             ->paginate(50);
 
