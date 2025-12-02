@@ -61,6 +61,7 @@ class ProcessProjectData implements ShouldQueue
                 'response_payload' => $response->body(),
                 'status_code' => $response->status(),
                 'duration_ms' => (int)$durationMs,
+                'project_id' => $this->projectData->project_id,
             ]);
 
             if ($response->successful()) {

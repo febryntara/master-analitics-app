@@ -15,6 +15,7 @@ class ApiLog extends Model
         'response_payload',
         'status_code',
         'duration_ms',
+        'project_id',
     ];
 
     protected $casts = [

@@ -33,6 +33,11 @@ class Project extends Model
         return $this->hasMany(TaskLog::class, 'project_id');
     }
 
+    public function apiLogs(): HasMany
+    {
+        return $this->hasMany(ApiLog::class, 'project_id');
+    }
+
     // boot method to set default values
     protected static function booted()
     {
@@ -41,6 +46,8 @@ class Project extends Model
             $project->data()->each(function ($projectData) {
                 $projectData->delete();
             });
+
+            $project->apiLogs()->delete();
             $project->taskLogs()->delete();
         });
     }

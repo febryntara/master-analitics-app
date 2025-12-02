@@ -165,6 +165,7 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         $deletedCount = $project->data()->count();
         $project->data()->get()->each->delete();
+        $project->apiLogs()->delete();
         $project->taskLogs()->delete();
         $project->status = 'pending';
         $project->save();
