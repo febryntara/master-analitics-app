@@ -53,7 +53,7 @@
     <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6">
         <div class="p-10 text-black bg-white border shadow-xl backdrop-blur-md rounded-2xl">
             <h1 class="mb-4 text-4xl font-bold text-center">Master Analitics</h1>
-            <p class="max-w-xl mb-8 text-center text-md">know the value of an object by many people</p>
+            <p class="max-w-xl mb-8 text-center text-md">Discover what people really think.</p>
         </div>
     </div>
 
